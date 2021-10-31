@@ -49,12 +49,12 @@ public class PostagemController {
 		if(lista.isEmpty()) {
 			return ResponseEntity.status(204).build();
 		} else {
-			return ResponseEntity.status(200).body(lista);
+			return ResponseEntity.status(200).body(lista); 
 		}
 	}
 	
 	@PostMapping("/salvar")
-	public ResponseEntity<PostagemModel> salvar(@RequestBody PostagemModel postagem) {
+	public ResponseEntity<PostagemModel> salvar(  @RequestBody PostagemModel postagem) {
 		return ResponseEntity.status(201).body(repositorio.save(postagem));
 	}
 	
