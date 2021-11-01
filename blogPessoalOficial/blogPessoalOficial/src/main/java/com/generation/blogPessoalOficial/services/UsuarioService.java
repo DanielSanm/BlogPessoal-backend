@@ -67,4 +67,15 @@ public class UsuarioService {
 		return null;
 	}
 	
+	public Optional<Usuario> atualizar(Usuario usuarioParaAtualizar) {
+		return repositorio.findById(usuarioParaAtualizar.getId()).map(resp -> {
+			resp.setNome(usuarioParaAtualizar.getNome());
+			resp.setSenha(cadastrar(usuarioParaAtualizar).getSenha());
+			return Optional.ofNullable(repositorio.save(resp));
+		}).orElseGet(() -> {
+			return Optional.empty();
+		});
+
+	}
+	
 }

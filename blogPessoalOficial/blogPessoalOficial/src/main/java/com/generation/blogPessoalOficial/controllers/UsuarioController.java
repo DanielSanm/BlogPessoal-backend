@@ -3,13 +3,17 @@ package com.generation.blogPessoalOficial.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
@@ -60,4 +64,24 @@ public class UsuarioController {
 		return ResponseEntity.ok(repositorio.findAll());
 	}
 	
+	@PutMapping("/atualizar")
+	public ResponseEntity<Usuario> atualizar(@Valid @RequestBody Usuario novoUsuario) {
+		return service.atualizar(novoUsuario).map(resp -> ResponseEntity.status(201).body(resp))
+				.orElseThrow(() -> {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+							"Necessario que passe um idUsuario valido para alterar!.");
+				});
+
+	}
+	
+	@DeleteMapping("/deletar/{id}")
+	public ResponseEntity<Object> deletar(@PathVariable(value = "id") Long idUsuario) {
+		return repositorio.findById(idUsuario).map(resp -> {
+			repositorio.deleteById(idUsuario);
+			return ResponseEntity.status(200).build();
+		}).orElseThrow(() -> {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"ID inexistente, passe um ID valido para deletar!.");
+		});
+	}
 }

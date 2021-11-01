@@ -5,8 +5,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Classe espelho da tabela usuario no banco de dados
@@ -27,7 +30,9 @@ public class Usuario {
 	@NotBlank
 	private String nome;
 	
-	@NotBlank
+	@ApiModelProperty(example = "email@email.com.br")
+	@NotBlank(message = "O atributo Usuário é Obrigatório!")
+	@Email(message = "O atributo Usuário deve ter um email válido!")
 	@Size(min = 5)
 	private String usuario;
 	

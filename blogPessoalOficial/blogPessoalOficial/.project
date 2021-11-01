@@ -20,4 +20,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>API - Blog Pessoal.pdf</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Downloads/API - Blog Pessoal.pdf</location>
+		</link>
+	</linkedResources>
 </projectDescription>
