@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.generation.blogPessoalOficial.services.UsuarioService;
 
 @Controller
 @RequestMapping("/usuario")
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class UsuarioController {
 	
 	@Autowired
@@ -43,9 +45,12 @@ public class UsuarioController {
 	}
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(service.cadastrar(usuario));
+	public ResponseEntity<Object> salvar(@Valid @RequestBody Usuario usuario) {
+		return service.cadastrar(usuario).map(resp -> ResponseEntity.status(201).body(resp))
+				.orElseThrow(() -> {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+							"Usuário existente, cadastre outro email!");
+				});
 	}
 	
 	@GetMapping("/pesquisar/{nome}")

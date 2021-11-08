@@ -18,23 +18,18 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository repositorio;
 	
-	/**
-	 * Método cadastra o usuario e inseri no banco os dados inserido pelo usuário
-	 * 
-	 * @param usuario
-	 * @return cadastra no banco de dados o usuario
-	 * @author Daniel
-	 * @since 1.0
-	 * 
-	 */
-	
-	public Usuario cadastrar(Usuario usuario) {
+	private static String encriptaSenha(String senha) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		
-		String senhaEncoder = encoder.encode(usuario.getSenha());
-		usuario.setSenha(senhaEncoder);
-		
-		return repositorio.save(usuario);
+		return encoder.encode(senha);
+	}
+	
+	public Optional<Object> cadastrar(Usuario usuario) {
+		return repositorio.findByUsuario(usuario.getUsuario()).map(usuarioExistente -> {
+			return Optional.empty();
+		}).orElseGet(() -> {
+			usuario.setSenha(encriptaSenha(usuario.getSenha()));
+			return Optional.ofNullable(repositorio.save(usuario));
+		});
 	}
 	
 	/**
@@ -59,7 +54,10 @@ public class UsuarioService {
 				String authHeader = "Basic " + new String(encodedAuth);
 				
 				user.get().setToken(authHeader);
+				user.get().setId(usuario.get().getId());
 				user.get().setNome(usuario.get().getNome());
+				user.get().setFoto(usuario.get().getFoto());
+				user.get().setTipo(usuario.get().getTipo());
 				
 				return user;
 			}
@@ -70,7 +68,7 @@ public class UsuarioService {
 	public Optional<Usuario> atualizar(Usuario usuarioParaAtualizar) {
 		return repositorio.findById(usuarioParaAtualizar.getId()).map(resp -> {
 			resp.setNome(usuarioParaAtualizar.getNome());
-			resp.setSenha(cadastrar(usuarioParaAtualizar).getSenha());
+			resp.setSenha(encriptaSenha(usuarioParaAtualizar.getSenha()));
 			return Optional.ofNullable(repositorio.save(resp));
 		}).orElseGet(() -> {
 			return Optional.empty();
